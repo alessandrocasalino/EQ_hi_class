@@ -3997,6 +3997,8 @@ int spectra_output_tk_titles(struct background *pba,
       class_store_columntitle(titles,"d_dcdm",pba->has_dcdm);
       class_store_columntitle(titles,"d_dr",pba->has_dr);
       class_store_columntitle(titles,"d_scf",pba->has_scf);
+      class_store_columntitle(titles,"vx_smg",pba->has_smg);
+      class_store_columntitle(titles,"vx_prime_smg",pba->has_smg);
       class_store_columntitle(titles,"d_tot",_TRUE_);
       class_store_columntitle(titles,"phi",ppt->has_source_phi);
       class_store_columntitle(titles,"psi",ppt->has_source_psi);

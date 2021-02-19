@@ -716,7 +716,7 @@ int perturb_indices_of_perturbs(
   ppt->has_source_delta_dcdm = _FALSE_;
   ppt->has_source_delta_fld = _FALSE_;
   ppt->has_source_delta_scf = _FALSE_;
-  ppt->has_source_phi_smg = _FALSE_;  //scalar field
+  ppt->has_source_vx_smg = _FALSE_;  //scalar field
   ppt->has_source_delta_dr = _FALSE_;
   ppt->has_source_delta_ur = _FALSE_;
   ppt->has_source_delta_ncdm = _FALSE_;
@@ -728,7 +728,7 @@ int perturb_indices_of_perturbs(
   ppt->has_source_theta_dcdm = _FALSE_;
   ppt->has_source_theta_fld = _FALSE_;
   ppt->has_source_theta_scf = _FALSE_;
-  ppt->has_source_phi_prime_smg = _FALSE_;  //scalar field
+  ppt->has_source_vx_prime_smg = _FALSE_;  //scalar field
   ppt->has_source_theta_dr = _FALSE_;
   ppt->has_source_theta_ur = _FALSE_;
   ppt->has_source_theta_ncdm = _FALSE_;
@@ -817,7 +817,7 @@ int perturb_indices_of_perturbs(
         if (pba->has_ur == _TRUE_)
           ppt->has_source_delta_ur = _TRUE_;
 	if (pba->has_smg == _TRUE_)
-	  ppt->has_source_phi_smg = _TRUE_;
+    ppt->has_source_vx_smg = _TRUE_;
         if (pba->has_dr == _TRUE_)
           ppt->has_source_delta_dr = _TRUE_;
         if (pba->has_ncdm == _TRUE_)
@@ -843,7 +843,7 @@ int perturb_indices_of_perturbs(
         if (pba->has_scf == _TRUE_)
           ppt->has_source_theta_scf = _TRUE_;
 	if (pba->has_smg == _TRUE_)
-          ppt->has_source_phi_prime_smg = _TRUE_;
+        ppt->has_source_vx_prime_smg = _TRUE_;
         if (pba->has_ur == _TRUE_)
           ppt->has_source_theta_ur = _TRUE_;
         if (pba->has_dr == _TRUE_)
@@ -901,7 +901,7 @@ int perturb_indices_of_perturbs(
       class_define_index(ppt->index_tp_delta_dcdm, ppt->has_source_delta_dcdm,index_type,1);
       class_define_index(ppt->index_tp_delta_fld,  ppt->has_source_delta_fld, index_type,1);
       class_define_index(ppt->index_tp_delta_scf,  ppt->has_source_delta_scf, index_type,1);
-      class_define_index(ppt->index_tp_phi_smg,    ppt->has_source_phi_smg,   index_type,1);
+      class_define_index(ppt->index_tp_vx_smg,    ppt->has_source_vx_smg,   index_type,1);
       class_define_index(ppt->index_tp_delta_dr,   ppt->has_source_delta_dr, index_type,1);
       class_define_index(ppt->index_tp_delta_ur,   ppt->has_source_delta_ur,  index_type,1);
       class_define_index(ppt->index_tp_delta_ncdm1,ppt->has_source_delta_ncdm,index_type,pba->N_ncdm);
@@ -913,7 +913,7 @@ int perturb_indices_of_perturbs(
       class_define_index(ppt->index_tp_theta_dcdm, ppt->has_source_theta_dcdm,index_type,1);
       class_define_index(ppt->index_tp_theta_fld,  ppt->has_source_theta_fld, index_type,1);
       class_define_index(ppt->index_tp_theta_scf,  ppt->has_source_theta_scf, index_type,1);
-      class_define_index(ppt->index_tp_phi_prime_smg,  ppt->has_source_phi_prime_smg, index_type,1);
+      class_define_index(ppt->index_tp_vx_prime_smg,  ppt->has_source_vx_prime_smg, index_type,1);
       class_define_index(ppt->index_tp_theta_dr,   ppt->has_source_theta_dr,  index_type,1);
       class_define_index(ppt->index_tp_theta_ur,   ppt->has_source_theta_ur,  index_type,1);
       class_define_index(ppt->index_tp_theta_ncdm1,ppt->has_source_theta_ncdm,index_type,pba->N_ncdm);
@@ -2736,6 +2736,10 @@ int perturb_prepare_output(struct background * pba,
       /* Cold dark matter */
       class_store_columntitle(ppt->scalar_titles,"delta_cdm",pba->has_cdm);
       class_store_columntitle(ppt->scalar_titles,"theta_cdm",pba->has_cdm);
+
+      /* Scalar field smg */
+      class_store_columntitle(ppt->scalar_titles, "vx_smg", pba->has_smg);
+      class_store_columntitle(ppt->scalar_titles, "vx_prime_smg", pba->has_smg);
       /* Non-cold dark matter */
       if ((pba->has_ncdm == _TRUE_) && ((ppt->has_density_transfers == _TRUE_) || (ppt->has_velocity_transfers == _TRUE_) || (ppt->has_source_delta_m == _TRUE_))) {
         for(n_ncdm=0; n_ncdm < pba->N_ncdm; n_ncdm++){
@@ -2759,9 +2763,7 @@ int perturb_prepare_output(struct background * pba,
       /* Scalar field scf */
       class_store_columntitle(ppt->scalar_titles, "delta_scf", pba->has_scf);
       class_store_columntitle(ppt->scalar_titles, "theta_scf", pba->has_scf);
-      /* Scalar field smg */
-      class_store_columntitle(ppt->scalar_titles, "V_x_smg", pba->has_smg);
-      class_store_columntitle(ppt->scalar_titles, "V_x_prime_smg", pba->has_smg);
+
 
       class_store_columntitle(ppt->scalar_titles,"h_prime",pba->has_smg);
       class_store_columntitle(ppt->scalar_titles,"eta",pba->has_smg);
@@ -7461,9 +7463,9 @@ int perturb_sources(
       _set_source_(ppt->index_tp_delta_scf) = delta_rho_scf/pvecback[pba->index_bg_rho_scf];
     }
 
-    /* phi_smg TODO: either change the name of the source or write delta_phi_dot */
-    if (ppt->has_source_phi_smg == _TRUE_) {
-      _set_source_(ppt->index_tp_phi_smg) = pvecmetric[ppw->index_mt_vx_smg];
+    /* vx_smg */
+    if (ppt->has_source_vx_smg == _TRUE_) {
+      _set_source_(ppt->index_tp_vx_smg) = pvecmetric[ppw->index_mt_vx_smg];
     }
 
     /* delta_dr */
@@ -10740,7 +10742,7 @@ int calc_extfld_ampl(int nexpo,  double kin, double bra, double dbra, double run
         if(reg_rescaled>0 && (fabs(den1)<reg_rescaled)){
               den1 = copysign(reg_rescaled,den1);
         }
-        
+
         B1_smg = (bra/Dd)*(bra/den1)*((-6 + kin)*l1 + 3*l4);
         B1_smg +=  (3*pow(bra,3))*(l1/Dd)/den1;
         B1_smg += 2*(cs2num/Dd)*(3*bra*kin + pow(kin,2) - 3*l4)/(2.*(-2. + bra)*(kin + l1));

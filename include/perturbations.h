@@ -276,7 +276,7 @@ struct perturbs
   short has_source_delta_dcdm; /**< do we need source for delta of DCDM? */
   short has_source_delta_fld;  /**< do we need source for delta of dark energy? */
   short has_source_delta_scf;  /**< do we need source for delta from scalar field? */
-  short has_source_phi_smg;  /**< do we need source for delta of scalar field? */
+  short has_source_vx_smg;     /**< do we need source for delta of scalar field? */
   short has_source_delta_dr; /**< do we need source for delta of decay radiation? */
   short has_source_delta_ur; /**< do we need source for delta of ultra-relativistic neutrinos/relics? */
   short has_source_delta_ncdm; /**< do we need source for delta of all non-cold dark matter species (e.g. massive neutrinos)? */
@@ -288,7 +288,7 @@ struct perturbs
   short has_source_theta_dcdm; /**< do we need source for theta of DCDM? */
   short has_source_theta_fld;  /**< do we need source for theta of dark energy? */
   short has_source_theta_scf;  /**< do we need source for theta of scalar field? */
-  short has_source_phi_prime_smg;  /**< do we need source for theta of scalar field? */
+  short has_source_vx_prime_smg;/**< do we need source for theta of scalar field? */
   short has_source_theta_dr; /**< do we need source for theta of ultra-relativistic neutrinos/relics? */
   short has_source_theta_ur; /**< do we need source for theta of ultra-relativistic neutrinos/relics? */
   short has_source_theta_ncdm; /**< do we need source for theta of all non-cold dark matter species (e.g. massive neutrinos)? */
@@ -317,7 +317,7 @@ struct perturbs
   int index_tp_delta_dcdm;/**< index value for delta of DCDM */
   int index_tp_delta_fld;  /**< index value for delta of dark energy */
   int index_tp_delta_scf;  /**< index value for delta of scalar field */
-  int index_tp_phi_smg;  /**< index value for delta of scalar field */
+  int index_tp_vx_smg;  /**< index value for delta of scalar field */
   int index_tp_delta_dr; /**< index value for delta of decay radiation */
   int index_tp_delta_ur; /**< index value for delta of ultra-relativistic neutrinos/relics */
   int index_tp_delta_ncdm1; /**< index value for delta of first non-cold dark matter species (e.g. massive neutrinos) */
@@ -332,7 +332,7 @@ struct perturbs
   int index_tp_theta_dcdm; /**< index value for theta of DCDM */
   int index_tp_theta_fld;  /**< index value for theta of dark energy */
   int index_tp_theta_scf;  /**< index value for theta of scalar field */
-  int index_tp_phi_prime_smg;  /**< index value for theta of scalar field */
+  int index_tp_vx_prime_smg;  /**< index value for theta of scalar field */
   int index_tp_theta_ur;   /**< index value for theta of ultra-relativistic neutrinos/relics */
   int index_tp_theta_dr;   /**< index value for F1 of decay radiation */
   int index_tp_theta_ncdm1;/**< index value for theta of first non-cold dark matter species (e.g. massive neutrinos) */
@@ -968,7 +968,7 @@ extern "C" {
                             int size_scheme,
                             double * tau_export);
 
-  int calc_extfld_ampl(int n,  double kin, double bra, double dbra, double run, double ten, double DelM2, 
+  int calc_extfld_ampl(int n,  double kin, double bra, double dbra, double run, double ten, double DelM2,
                         double Omx, double wx, double l1, double l2, double l3, double l4,
                         double l5, double l6,double l7,double l8, double cs2num, double Dd, double ic_regulator_smg,
                         double * amplitude);

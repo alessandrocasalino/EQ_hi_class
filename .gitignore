@@ -1,0 +1,7 @@
+build /*
+*.o
+*.DS_Store
+*.a
+*.o
+build/arrays.o
+report.txt
