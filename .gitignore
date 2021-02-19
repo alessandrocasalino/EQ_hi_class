@@ -5,3 +5,4 @@ build /*
 *.o
 build/arrays.o
 report.txt
+class
