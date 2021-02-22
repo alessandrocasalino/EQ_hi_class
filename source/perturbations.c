@@ -2737,6 +2737,10 @@ int perturb_prepare_output(struct background * pba,
       class_store_columntitle(ppt->scalar_titles,"delta_cdm",pba->has_cdm);
       class_store_columntitle(ppt->scalar_titles,"theta_cdm",pba->has_cdm);
 
+      /* alpha for gauge transformation */
+      class_store_columntitle(ppt->scalar_titles, "alpha", _TRUE_);
+      class_store_columntitle(ppt->scalar_titles, "alpha_prime", _TRUE_);
+
       /* Scalar field smg */
       class_store_columntitle(ppt->scalar_titles, "vx_smg", pba->has_smg);
       class_store_columntitle(ppt->scalar_titles, "vx_prime_smg", pba->has_smg);

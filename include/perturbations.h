@@ -277,6 +277,8 @@ struct perturbs
   short has_source_delta_fld;  /**< do we need source for delta of dark energy? */
   short has_source_delta_scf;  /**< do we need source for delta from scalar field? */
   short has_source_vx_smg;     /**< do we need source for delta of scalar field? */
+  short has_source_alpha;
+  short has_source_alpha_prime;
   short has_source_delta_dr; /**< do we need source for delta of decay radiation? */
   short has_source_delta_ur; /**< do we need source for delta of ultra-relativistic neutrinos/relics? */
   short has_source_delta_ncdm; /**< do we need source for delta of all non-cold dark matter species (e.g. massive neutrinos)? */
@@ -318,6 +320,8 @@ struct perturbs
   int index_tp_delta_fld;  /**< index value for delta of dark energy */
   int index_tp_delta_scf;  /**< index value for delta of scalar field */
   int index_tp_vx_smg;  /**< index value for delta of scalar field */
+  int index_tp_alpha;
+  int index_tp_alpha_prime;
   int index_tp_delta_dr; /**< index value for delta of decay radiation */
   int index_tp_delta_ur; /**< index value for delta of ultra-relativistic neutrinos/relics */
   int index_tp_delta_ncdm1; /**< index value for delta of first non-cold dark matter species (e.g. massive neutrinos) */
@@ -468,6 +472,8 @@ struct perturb_vector
   int index_pt_phi_prime_scf;  /**< scalar field velocity */
   int index_pt_vx_smg;  /**< scalar field density */
   int index_pt_vx_prime_smg;  /**< scalar field velocity */
+  int index_pt_alpha;
+  int index_pt_alpha_prime;
   int index_pt_delta_ur; /**< density of ultra-relativistic neutrinos/relics */
   int index_pt_theta_ur; /**< velocity of ultra-relativistic neutrinos/relics */
   int index_pt_shear_ur; /**< shear of ultra-relativistic neutrinos/relics */
