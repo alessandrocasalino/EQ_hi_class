@@ -61,3 +61,5 @@ build/nonlinear.o
 build/lensing.o
 build/input.o
 build/class.o
+*.o
+python/build/lib.macosx-10.15-x86_64-3.9/classy.cpython-39-darwin.so

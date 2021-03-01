@@ -2742,8 +2742,8 @@ int perturb_prepare_output(struct background * pba,
       class_store_columntitle(ppt->scalar_titles, "alpha_prime", _TRUE_);
 
       /* Scalar field smg */
-      class_store_columntitle(ppt->scalar_titles, "vx_smg", pba->has_smg);
-      class_store_columntitle(ppt->scalar_titles, "vx_prime_smg", pba->has_smg);
+      class_store_columntitle(ppt->scalar_titles, "d_V_x_smg", pba->has_smg);
+      class_store_columntitle(ppt->scalar_titles, "t_V_x_smg", pba->has_smg);
       /* Non-cold dark matter */
       if ((pba->has_ncdm == _TRUE_) && ((ppt->has_density_transfers == _TRUE_) || (ppt->has_velocity_transfers == _TRUE_) || (ppt->has_source_delta_m == _TRUE_))) {
         for(n_ncdm=0; n_ncdm < pba->N_ncdm; n_ncdm++){
@@ -7658,7 +7658,7 @@ int perturb_print_variables(double tau,
   double delta_ur=0.,theta_ur=0.,shear_ur=0.,l4_ur=0.;
   double delta_rho_scf=0., rho_plus_p_theta_scf=0.;
   double delta_scf=0., theta_scf=0.;
-  double V_x_smg=0., V_x_prime_smg=0.;
+  double d_V_x_smg=0., t_V_x_smg=0.;
   double h_prime_smg=0., eta_smg=0.;
   /** - ncdm sector begins */
   int n_ncdm;
@@ -7924,8 +7924,8 @@ int perturb_print_variables(double tau,
 
     if (pba->has_smg == _TRUE_){
 
-      V_x_smg = ppw->pvecmetric[ppw->index_mt_vx_smg];
-      V_x_prime_smg = ppw->pvecmetric[ppw->index_mt_vx_prime_smg];
+      d_V_x_smg = ppw->pvecmetric[ppw->index_mt_vx_smg];
+      t_V_x_smg = ppw->pvecmetric[ppw->index_mt_vx_prime_smg];
       h_prime_smg = ppw->pvecmetric[ppw->index_mt_h_prime];
       eta_smg = y[ppw->pv->index_pt_eta];
     }
@@ -8038,8 +8038,8 @@ int perturb_print_variables(double tau,
     class_store_double(dataptr, delta_scf, pba->has_scf, storeidx);
     class_store_double(dataptr, theta_scf, pba->has_scf, storeidx);
     /* Scalar field smg*/
-    class_store_double(dataptr, V_x_smg, pba->has_smg, storeidx);
-    class_store_double(dataptr, V_x_prime_smg, pba->has_smg, storeidx);
+    class_store_double(dataptr, d_V_x_smg, pba->has_smg, storeidx);
+    class_store_double(dataptr, t_V_x_smg, pba->has_smg, storeidx);
     class_store_double(dataptr, h_prime_smg, pba->has_smg, storeidx);
     class_store_double(dataptr, eta_smg, pba->has_smg, storeidx);
 

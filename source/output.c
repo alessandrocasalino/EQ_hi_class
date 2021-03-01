@@ -1267,12 +1267,15 @@ int output_tk(
           if (ppt->has_density_transfers == _TRUE_) {
             fprintf(tkfile,"# d_i   stands for (delta rho_i/rho_i)(k,z) with above normalization \n");
             fprintf(tkfile,"# d_tot stands for (delta rho_tot/rho_tot)(k,z) with rho_Lambda NOT included in rho_tot\n");
+            fprintf(tkfile,"# d_V_x_smg   stands for (scalar field perturbations)(k,z) with above normalization \n");
             fprintf(tkfile,"# (note that this differs from the transfer function output from CAMB/CMBFAST, which gives the same\n");
             fprintf(tkfile,"#  quantities divided by -k^2 with k in Mpc^-1; use format=camb to match CAMB)\n");
           }
           if (ppt->has_velocity_transfers == _TRUE_) {
             fprintf(tkfile,"# t_i   stands for theta_i(k,z) with above normalization \n");
             fprintf(tkfile,"# t_tot stands for (sum_i [rho_i+p_i] theta_i)/(sum_i [rho_i+p_i]))(k,z)\n");
+            fprintf(tkfile,"# t_V_x_smg  stands for (time derivative of the scalar field perturbations)(k,z) \n");
+
           }
           fprintf(tkfile,"#\n");
         }
