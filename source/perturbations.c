@@ -2737,13 +2737,6 @@ int perturb_prepare_output(struct background * pba,
       class_store_columntitle(ppt->scalar_titles,"delta_cdm",pba->has_cdm);
       class_store_columntitle(ppt->scalar_titles,"theta_cdm",pba->has_cdm);
 
-      /* alpha for gauge transformation */
-      class_store_columntitle(ppt->scalar_titles, "alpha", _TRUE_);
-      class_store_columntitle(ppt->scalar_titles, "alpha_prime", _TRUE_);
-
-      /* Scalar field smg */
-      class_store_columntitle(ppt->scalar_titles, "d_V_x_smg", pba->has_smg);
-      class_store_columntitle(ppt->scalar_titles, "t_V_x_smg", pba->has_smg);
       /* Non-cold dark matter */
       if ((pba->has_ncdm == _TRUE_) && ((ppt->has_density_transfers == _TRUE_) || (ppt->has_velocity_transfers == _TRUE_) || (ppt->has_source_delta_m == _TRUE_))) {
         for(n_ncdm=0; n_ncdm < pba->N_ncdm; n_ncdm++){
@@ -2771,6 +2764,14 @@ int perturb_prepare_output(struct background * pba,
 
       class_store_columntitle(ppt->scalar_titles,"h_prime",pba->has_smg);
       class_store_columntitle(ppt->scalar_titles,"eta",pba->has_smg);
+
+      /* alpha for gauge transformation */
+      class_store_columntitle(ppt->scalar_titles, "alpha", _TRUE_);
+      class_store_columntitle(ppt->scalar_titles, "alpha_prime", _TRUE_);
+
+      /* Scalar field smg */
+      class_store_columntitle(ppt->scalar_titles, "d_V_x_smg", pba->has_smg);
+      class_store_columntitle(ppt->scalar_titles, "t_V_x_smg", pba->has_smg);
 
       ppt->number_of_scalar_titles =
         get_number_of_titles(ppt->scalar_titles);
