@@ -11,19 +11,25 @@
 #include "parser.h"
 #include "rootfinder.h"
 
+//The name for this macro can be at most 30 characters total
+#define _class_print_species_(name,type) \
+printf("-> %-30s Omega = %-15g , omega = %-15g\n",name,pba->Omega0_##type,pba->Omega0_##type*pba->h*pba->h);
+
 /** list of possible types of spatial curvature */
 
 enum spatial_curvature {flat,open,closed};
+
 enum gravity_model {propto_omega, propto_scale,
     constant_alphas,
     eft_alphas_power_law, eft_gammas_power_law, eft_gammas_exponential,
     galileon, nkgb,
     brans_dicke,
     quintessence_monomial, quintessence_extended, quintessence_tracker,
-    alpha_attractor_canonical
+    alpha_attractor_canonical,
+    cccg_exp, cccg_pow, cccg_exp_tanh
 }; //write here the different models
 
-// enum gravity_model_subclass {quint_exp, cccg_exp, cccg_pow}; //write here model subclasses
+enum gravity_submodel {unspecified, cccg_exp_normal, cccg_exp_canonical}; //write here model subclasses
 
 enum expansion_model {lcdm, wowa, wowa_w, wede}; //parameterized expansion, only for non-self consistent Horndeski theories \\ILSWEDE
 
@@ -79,7 +85,7 @@ struct background
   double cs2_fld; /**< \f$ c^2_{s~DE} \f$: sound speed of the fluid
 		     in the frame comoving with the fluid (so, this is
 		     not [delta p/delta rho] in the synchronous or
-		     newtonian gauge!!!) */
+		     newtonian gauge!) */
 
   short use_ppf; /**< flag switching on PPF perturbation equations
                     instead of true fluid equations for
@@ -90,6 +96,11 @@ struct background
   double c_gamma_over_c_fld; /**< ppf parameter defined in eq. (16) of 0808.3125 [astro-ph] */
 
   double Omega0_ur; /**< \f$ \Omega_{0 \nu r} \f$: ultra-relativistic neutrinos */
+
+  double Omega0_idr; /**< \f$ \Omega_{0 idr} \f$: interacting dark radiation */
+  double T_idr;      /**< \f$ T_{idr} \f$: current temperature of interacting dark radiation in Kelvins */
+
+  double Omega0_idm_dr; /**< \f$ \Omega_{0 idm_dr} \f$: dark matter interacting with dark radiation */
 
   double Omega0_dcdmdr; /**< \f$ \Omega_{0 dcdm}+\Omega_{0 dr} \f$: decaying cold dark matter (dcdm) decaying to dark radiation (dr) */
 
@@ -116,12 +127,14 @@ struct background
 
 
   enum gravity_model gravity_model_smg; /** Horndeski model */
-//   enum gravity_model_subclass gravity_submodel_smg; /** Horndeski model */
+  enum gravity_submodel gravity_submodel_smg; /** Horndeski sub-model */
   enum expansion_model expansion_model_smg; /* choice of expansion rate */
 
   short initial_conditions_set_smg; /* whether IC have been established. For printing and information */
+  int scalar_back_branch_smg; /* choice of branch for initial conditions, whenever multiple attractors exist */
   short parameters_tuned_smg; /* whether model has been tuned. For doing stability tests, etc... */
   short is_quintessence_smg; /* is the scalar field from a quintessence model?*/
+  short is_conformally_coupled_smg; /* is the scalar field conformally coupled (G4=G4(phi), C5=0)? Equivalent to c_g = c*/
 
   double Omega0_smg; /**< \f$ \Omega_{0_\phi} \f$ : scalar field energy fraction */
   double Omega_smg_debug; /**< debug value when no tuning is wanted */
@@ -146,9 +159,12 @@ struct background
   double min_bra_smg; /**< minimum value of the braiding */
   double max_bra_smg; /**< maximum value of the braiding */
 
+  double rescale_alpha_b_smg; /**< rescale the braiding (e.g. to study the effect of perturbations vs background)*/
+  double rescale_alpha_m_smg; /**< rescale the running (e.g. to study the effect of perturbations vs background)*/
+
   int skip_stability_tests_smg; /**< specify if you want to skip the stability tests for the field perturbations */
   double a_min_stability_test_smg; /** < skip stability tests for a < a_min */
-
+  double a_max_conformal_coupling_regulate_smg; /** < never use conformal coupling regularization for a > a_max */
 
   int field_evolution_smg; /**< does the model require solving the equation for the scalar field at the background? this is typically not the case for parameterized models */
   int M_pl_evolution_smg; /**< does the model require integrating the Planck mass from alpha_M? */
@@ -170,6 +186,7 @@ struct background
 
   int M_pl_tuning_smg; /**< whether we want secondary tuning for M_pl(today) */
   int tuning_index_2_smg;     /**< index in scf_parameters used for tuning (the Planck mass) */
+  int initial_guess;          /**< If there are different initial guess choose one of them  */
   double M_pl_today_smg;
 
   short output_background_smg; /**< flag regulating the amount of information printed onbackground.dat output */
@@ -224,6 +241,9 @@ struct background
   double Neff; /**< so-called "effective neutrino number", computed at earliest time in interpolation table */
   double Omega0_dcdm; /**< \f$ \Omega_{0 dcdm} \f$: decaying cold dark matter */
   double Omega0_dr; /**< \f$ \Omega_{0 dr} \f$: decay radiation */
+  double Omega0_m;  /**< total non-relativistic matter today */
+  double Omega0_r;  /**< total ultra-relativistic radiation today */
+  double Omega0_de; /**< total dark energy density today, currently defined as 1 - Omega0_m - Omega0_r - Omega0_k */
   double a_eq;      /**< scale factor at radiation/matter equality */
   double H_eq;      /**< Hubble rate at radiation/matter equality [Mpc^-1] */
   double z_eq;      /**< redshift at radiation/matter equality */
@@ -256,6 +276,8 @@ struct background
   int index_bg_rho_fld;       /**< fluid density */
   int index_bg_w_fld;         /**< fluid equation of state */
   int index_bg_rho_ur;        /**< relativistic neutrinos/relics density */
+  int index_bg_rho_idm_dr;    /**< density of dark matter interacting with dark radiation */
+  int index_bg_rho_idr;       /**< density of interacting dark radiation */
   int index_bg_rho_dcdm;      /**< dcdm density */
   int index_bg_rho_dr;        /**< dr density */
 
@@ -266,6 +288,7 @@ struct background
   int index_bg_ddV_scf;       /**< scalar field potential second derivative V'' */
   int index_bg_rho_scf;       /**< scalar field energy density */
   int index_bg_p_scf;         /**< scalar field pressure */
+  int index_bg_p_prime_scf;         /**< scalar field pressure */
 
   int index_bg_phi_smg;       /**< scalar field value */
   int index_bg_phi_prime_smg; /**< scalar field derivative wrt conformal time */
@@ -317,9 +340,16 @@ struct background
   int index_bg_p_prime_smg; /**< derivative of the pressure of the scalar field */
   int index_bg_w_smg; /**< equation of state of the scalar field */
 
+  int index_bg_G_eff_smg; /**< G effective in the infinite k limit */
+  int index_bg_slip_eff_smg; /**< slip effective in the infinite k limit */
+
   int index_bg_rho_ncdm1;     /**< density of first ncdm species (others contiguous) */
   int index_bg_p_ncdm1;       /**< pressure of first ncdm species (others contiguous) */
   int index_bg_pseudo_p_ncdm1;/**< another statistical momentum useful in ncdma approximation */
+
+  int index_bg_rho_tot;       /**< Total density */
+  int index_bg_p_tot;         /**< Total pressure */
+  int index_bg_p_tot_prime;   /**< Conf. time derivative of total pressure */
 
   int index_bg_Omega_r;       /**< relativistic density fraction (\f$ \Omega_{\gamma} + \Omega_{\nu r} \f$) */
 
@@ -420,6 +450,8 @@ struct background
   short has_lambda;    /**< presence of cosmological constant? */
   short has_fld;       /**< presence of fluid with constant w and cs2? */
   short has_ur;        /**< presence of ultra-relativistic neutrinos/relics? */
+  short has_idr;       /**< presence of interacting dark radiation? */
+  short has_idm_dr;    /**< presence of dark matter interacting with dark radiation? */
   short has_smg;       /**< presence of scalar field? */
   short has_curvature; /**< presence of global spatial curvature? */
 
@@ -678,6 +710,11 @@ extern "C" {
                double phi_prime
                );
 
+  /** Budget equation output */
+  int background_output_budget(
+               struct background* pba
+               );
+
 #ifdef __cplusplus
 }
 #endif
@@ -708,19 +745,15 @@ extern "C" {
 //@}
 
 /**
- * @name Some numbers useful in numerical algorithms - but not
- * affecting precision, otherwise would be in precision structure
+ * @name Some limits on possible background parameters
  */
 
 //@{
 
-#define _H0_BIG_ 1./2997.9     /**< maximal \f$ H_0 \f$ in \f$ Mpc^{-1} (h=1.0) \f$ */
-#define _H0_SMALL_ 0.3/2997.9  /**< minimal \f$ H_0 \f$ in \f$ Mpc^{-1} (h=0.3) \f$ */
-#define _TCMB_BIG_ 2.8         /**< maximal \f$ T_{cmb} \f$ in K */
-#define _TCMB_SMALL_ 2.7       /**< minimal \f$ T_{cmb}  \f$ in K */
-#define _TOLERANCE_ON_CURVATURE_ 1.e-5 /**< if \f$ | \Omega_k | \f$ smaller than this, considered as flat */
-#define _OMEGAK_BIG_ 0.5     /**< maximal \f$ Omega_k \f$ */
-#define _OMEGAK_SMALL_ -0.5  /**< minimal \f$ Omega_k \f$ */
+#define _h_BIG_ 1.5            /**< maximal \f$ h \f$ */
+#define _h_SMALL_ 0.3         /**< minimal \f$ h \f$ */
+#define _omegab_BIG_ 0.039    /**< maximal \f$ omega_b \f$ */
+#define _omegab_SMALL_ 0.005  /**< minimal \f$ omega_b \f$ */
 
 //@}
 

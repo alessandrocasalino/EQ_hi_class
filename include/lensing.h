@@ -24,6 +24,7 @@ struct lensing {
   //@{
 
   short has_lensed_cls; /**< do we need to compute lensed \f$ C_l\f$'s at all ? */
+  double A_L;   /**< rescale C_l^phi-phi just for the calculation of the lensed TT, TE, EE */
 
   //@}
 

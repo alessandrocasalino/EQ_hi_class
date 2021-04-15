@@ -111,3 +111,6 @@ build/lensing.o
 build/input.o
 build/class.o
 .DS_Store
+*.o
+*.o
+.DS_Store
