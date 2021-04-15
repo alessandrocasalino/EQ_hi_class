@@ -98,3 +98,16 @@ build/common.o
 build/class.o
 build/background.o
 build/arrays.o
+libclass.a
+include/common.h
+doc/.DS_Store
+build/transfer.o
+build/spectra.o
+build/primordial.o
+build/perturbations.o
+build/output.o
+build/nonlinear.o
+build/lensing.o
+build/input.o
+build/class.o
+.DS_Store
