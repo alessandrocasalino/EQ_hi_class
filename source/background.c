@@ -3622,16 +3622,17 @@ int background_gravity_functions(
 
     if (pba->gravity_model_smg == quintessence_extended) {
 
-      double alpha = pba->parameters_smg[0];
-      double V0 = pba->parameters_smg[1];
-      double beta = pba->parameters_smg[2];
+      double sigma = pba->parameters_smg[0];
+      double Lambda = pba->parameters_smg[1];
+      double V0 = pow(Lambda,4);
+      double alpha = pba->parameters_smg[2];
 
-      double V = pow(pba->H0/pba->h,2.) * V0 * pow(phi, alpha);
-      double V_phi = pow(pba->H0/pba->h,2.) * V0 * alpha * pow(phi, alpha - 1.);
+      double V = pow(pba->H0/pba->h,2.) * V0 * pow(phi, -sigma);
+      double V_phi = pow(pba->H0/pba->h,2.) * V0 * (-sigma) * pow(phi, -sigma - 1.);
 
-      double fun = beta * phi * phi;
-      double fun_phi = 2. * beta * phi;
-      double fun_phiphi = 2. * beta;
+      double fun = alpha * phi * phi;
+      double fun_phi = 2. * alpha * phi;
+      double fun_phiphi = 2. * alpha;
 
       G2 = X - V;
       G2_X = 1.;
