@@ -3223,6 +3223,7 @@ int background_output_titles(struct background * pba,
   class_store_columntitle(titles,"proper time [Gyr]",_TRUE_);
   class_store_columntitle(titles,"conf. time [Mpc]",_TRUE_);
   class_store_columntitle(titles,"H [1/Mpc]",_TRUE_);
+  class_store_columntitle(titles,"H_prime",_TRUE_);
   class_store_columntitle(titles,"comov. dist.",_TRUE_);
   class_store_columntitle(titles,"ang.diam.dist.",_TRUE_);
   class_store_columntitle(titles,"lum. dist.",_TRUE_);
@@ -3281,8 +3282,8 @@ int background_output_titles(struct background * pba,
 
   if (pba->output_background_smg >= 2){
     class_store_columntitle(titles,"phi_smg",pba->field_evolution_smg);
-    class_store_columntitle(titles,"phi'",pba->field_evolution_smg);
-    class_store_columntitle(titles,"phi''",pba->field_evolution_smg);
+    class_store_columntitle(titles,"phi_prime_smg",pba->field_evolution_smg);
+    class_store_columntitle(titles,"phi_prime_prime_smg",pba->field_evolution_smg);
     class_store_columntitle(titles,"E0",pba->field_evolution_smg);
     class_store_columntitle(titles,"E1",pba->field_evolution_smg);
     class_store_columntitle(titles,"E2",pba->field_evolution_smg);
@@ -3337,6 +3338,7 @@ int background_output_data(
     class_store_double(dataptr,pvecback[pba->index_bg_time]/_Gyr_over_Mpc_,_TRUE_,storeidx);
     class_store_double(dataptr,pba->conformal_age-pvecback[pba->index_bg_conf_distance],_TRUE_,storeidx);
     class_store_double(dataptr,pvecback[pba->index_bg_H],_TRUE_,storeidx);
+    class_store_double(dataptr,pvecback[pba->index_bg_H_prime],_TRUE_,storeidx);
     class_store_double(dataptr,pvecback[pba->index_bg_conf_distance],_TRUE_,storeidx);
     class_store_double(dataptr,pvecback[pba->index_bg_ang_distance],_TRUE_,storeidx);
     class_store_double(dataptr,pvecback[pba->index_bg_lum_distance],_TRUE_,storeidx);
@@ -3629,7 +3631,7 @@ int background_gravity_functions(
 
       double V = pow(pba->H0/pba->h,2.) * V0 * pow(phi, -sigma);
       double V_phi = pow(pba->H0/pba->h,2.) * V0 * (-sigma) * pow(phi, -sigma - 1.);
-
+      // printf("%f %f %f %f \n", 1./a -1., phi, pow(phi, -sigma),pow(phi, -sigma - 1.));
       double fun = alpha * phi * phi;
       double fun_phi = 2. * alpha * phi;
       double fun_phiphi = 2. * alpha;
