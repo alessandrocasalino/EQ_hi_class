@@ -1689,6 +1689,33 @@ int input_read_parameters(
         }//end of no has_dxdy_guess_smg
       }//end of quintessence_extended
 
+        if (strcmp(string1,"quintessence_extended_symmetron") == 0) {
+            pba->gravity_model_smg = quintessence_extended_symmetron;
+            pba->field_evolution_smg = _TRUE_;
+            pba->is_quintessence_smg = _FALSE_;
+            flag2=_TRUE_;
+
+            pba->parameters_size_smg = 5;
+            class_read_list_of_doubles("parameters_smg",pba->parameters_smg,pba->parameters_size_smg);
+
+            //double mu = pba->parameters_smg[0];
+            //double lambda = pba->parameters_smg[1];
+            //double phi_prime_ini_smg = pba->parameters_smg[2];
+            //double phi_ini_smg =  pba->parameters_smg[3];
+
+            if (has_tuning_index_smg == _FALSE_)
+                pba->tuning_index_smg = 2; //use phi_ini_smg for default tuning
+
+            /*if (has_dxdy_guess_smg == _FALSE_){
+
+                if(pba->tuning_index_smg == 3){
+                    phi_ini_smg = pow(pba->Omega0_smg/Omega_Lambda, 1./alpha);
+                    pba->parameters_smg[4] = phi_ini_smg;
+                    pba->tuning_dxdy_guess_smg = phi_ini_smg/(pba->Omega0_smg)/alpha;
+                }
+            }//end of no has_dxdy_guess_smg*/
+        }//end of quintessence_extended
+
 
     if (strcmp(string1,"quintessence_tracker") == 0) {
 	pba->gravity_model_smg = quintessence_tracker;

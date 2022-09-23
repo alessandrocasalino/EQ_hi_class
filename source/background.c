@@ -2744,6 +2744,11 @@ int background_initial_conditions(
     pvecback_integration[pba->index_bi_phi_prime_smg] = pba->parameters_smg[3]*pba->H0;
   break;
 
+    case quintessence_extended_symmetron:
+        pvecback_integration[pba->index_bi_phi_smg] = pba->parameters_smg[4];
+        pvecback_integration[pba->index_bi_phi_prime_smg] = pba->parameters_smg[3]*pba->H0;
+        break;
+
     case quintessence_tracker:
 
         /* Tracker quintessence at early times
@@ -3622,7 +3627,7 @@ int background_gravity_functions(
       G2_phi = -N*V0*pow(pba->H0/pba->h,2.)*pow(phi,N-1.);
     }
 
-    if (pba->gravity_model_smg == quintessence_extended) {
+    else if (pba->gravity_model_smg == quintessence_extended) {
 
       double sigma = pba->parameters_smg[0];
       double Lambda = pba->parameters_smg[1];
@@ -3631,10 +3636,32 @@ int background_gravity_functions(
 
       double V = pow(pba->H0/pba->h,2.) * V0 * pow(phi, -sigma);
       double V_phi = pow(pba->H0/pba->h,2.) * V0 * (-sigma) * pow(phi, -sigma - 1.);
-      // printf("%f %f %f %f \n", 1./a -1., phi, pow(phi, -sigma),pow(phi, -sigma - 1.));
       double fun = alpha * phi * phi;
       double fun_phi = 2. * alpha * phi;
       double fun_phiphi = 2. * alpha;
+
+      G2 = X - V;
+      G2_X = 1.;
+      G2_phi = - V_phi;
+
+      G4_smg = fun/2.;
+      G4 = 1/2. + G4_smg;
+      G4_phi = fun_phi/2.;
+      G4_phiphi = fun_phiphi/2.;
+
+    }
+
+    else if (pba->gravity_model_smg == quintessence_extended_symmetron) {
+
+      double mu = pba->parameters_smg[0];
+      double lambda = pba->parameters_smg[1];
+      double V0 = pba->parameters_smg[2];
+
+      double V = pow(pba->H0/pba->h,2.) * V0;
+      double V_phi = 0.;
+      double fun = mu/2. * phi * phi - lambda/4. * phi * phi * phi * phi;
+      double fun_phi = mu * phi - lambda * phi * phi * phi;
+      double fun_phiphi = mu - 3. * lambda * phi * phi;
 
       G2 = X - V;
       G2_X = 1.;
@@ -4262,6 +4289,13 @@ int background_gravity_parameters(
      printf("-> alpha = %g, V0 = %g, beta = %g, phi_prime_ini = %g, phi_ini = %g \n",
       pba->parameters_smg[0], pba->parameters_smg[1], pba->parameters_smg[2],
       pba->parameters_smg[4], pba->parameters_smg[3]);
+   break;
+
+   case quintessence_extended_symmetron:
+       printf("Modified gravity: quintessence_extended_symmetron with parameters: \n");
+       printf("-> mu = %g, lambda = %g, V0 = %g, phi_prime_ini = %g, phi_ini = %g \n",
+         pba->parameters_smg[0], pba->parameters_smg[1], pba->parameters_smg[2],
+         pba->parameters_smg[4], pba->parameters_smg[3]);
    break;
 
    case quintessence_tracker:
